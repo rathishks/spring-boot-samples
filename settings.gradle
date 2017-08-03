@@ -1,0 +1,12 @@
+includes()
+
+void includes() {
+	//def settingsDirectory = new File(settingsDir)
+	settingsDir.eachFileRecurse(groovy.io.FileType.DIRECTORIES) { dir ->
+		def buildFile = new File(dir.canonicalPath, "build.gradle")
+		if(buildFile.exists()) {
+			include ':' + dir.name
+			project(':' + dir.name).projectDir = new File(dir.canonicalPath)
+		}
+	}
+}
