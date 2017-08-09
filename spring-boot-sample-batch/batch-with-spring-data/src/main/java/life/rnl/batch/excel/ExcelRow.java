@@ -1,5 +1,15 @@
 package life.rnl.batch.excel;
 
-public class ExcelRow {
+import org.apache.poi.ss.usermodel.Row;
 
+public class ExcelRow {
+	private Row row;
+
+	public Row getRow() {
+		return row;
+	}
+
+	public void setRow(Row row) {
+		this.row = row;
+	}
 }

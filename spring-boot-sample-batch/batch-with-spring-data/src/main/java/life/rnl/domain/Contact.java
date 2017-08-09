@@ -12,7 +12,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import life.rnl.batch.excel.annotations.ExcelColumn;
+import life.rnl.batch.excel.annotations.ExcelSheet;
+
 @Entity
+@ExcelSheet("Contacts")
 public class Contact {
 	@Id
 	@GeneratedValue
@@ -24,15 +28,18 @@ public class Contact {
 	@NotNull
 	@Size(min = 1)
 	@Pattern(regexp = "[a-zA-Z]")
+	@ExcelColumn("First Name")
 	private String firstName;
 
 	@NotNull
 	@Size(min = 1)
 	@Pattern(regexp = "[a-zA-Z]")
+	@ExcelColumn("Last Name")
 	private String lastName;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@ExcelColumn("Date of Birth")
 	private Calendar dateOfBirth;
 
 	public String getFirstName() {
