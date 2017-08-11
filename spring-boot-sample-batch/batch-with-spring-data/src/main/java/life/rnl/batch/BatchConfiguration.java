@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
+import life.rnl.batch.excel.ExcelProcessor;
 import life.rnl.batch.excel.ExcelReader;
 import life.rnl.batch.excel.mapping.ExcelMapping;
 import life.rnl.batch.excel.mapping.builder.ExcelMappingBuilder;
@@ -16,14 +17,27 @@ import life.rnl.domain.Contact;
 public class BatchConfiguration {
 
 	@Bean
-	public ExcelReader reader(ExcelMappingBuilder excelMappingBuilder, @Value("classpath:Contacts.xlsx") Resource resource) {
-		ExcelReader excelReader = new ExcelReader();
-		
+	public ExcelMapping contactMapping(ExcelMappingBuilder excelMappingBuilder) {
 		ExcelMapping excelMapping = excelMappingBuilder.build(Contact.class);
-		excelReader.setExcelMapping(excelMapping);
-		
+		return excelMapping;
+	}
+
+	@Bean
+	public ExcelReader reader(ExcelMapping contactMapping, @Value("classpath:Contacts.xlsx") Resource resource) {
+		ExcelReader excelReader = new ExcelReader();
+
+		excelReader.setExcelMapping(contactMapping);
 		excelReader.setResource(resource);
-		
+
 		return excelReader;
+	}
+
+	@Bean
+	public ExcelProcessor<Contact> processor(ExcelMapping contactMapping) {
+		ExcelProcessor<Contact> excelProcessor = new ExcelProcessor<>();
+
+		excelProcessor.setExcelMapping(contactMapping);
+
+		return excelProcessor;
 	}
 }

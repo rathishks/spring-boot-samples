@@ -9,7 +9,8 @@ public class ExcelMappingConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ExcelMappingBuilder excelMappingBuilder() {
-		return () -> {
+		return new ExcelMappingBuilder() {
+
 		};
 	}
 }

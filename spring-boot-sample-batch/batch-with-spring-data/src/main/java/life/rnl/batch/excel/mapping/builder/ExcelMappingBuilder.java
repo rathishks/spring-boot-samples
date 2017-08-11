@@ -12,9 +12,7 @@ import life.rnl.batch.excel.mapping.ExcelMapping;
 import life.rnl.batch.excel.mapping.ExcelMappingColumn;
 import life.rnl.batch.excel.mapping.ExcelMappingImpl;
 
-@FunctionalInterface
 public interface ExcelMappingBuilder {
-	public void stub();
 	
 	default ExcelMapping build(Class<?> clazz) {
 		Assert.notNull(clazz, "A class must be specified to build the ExcelMapping.");
