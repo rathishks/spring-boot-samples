@@ -1,20 +1,23 @@
-package life.rnl.batch.excel.mapping;
+package life.rnl.batch.excel.mapping.builder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 import life.rnl.batch.excel.annotations.ExcelColumn;
 import life.rnl.batch.excel.annotations.ExcelSheet;
+import life.rnl.batch.excel.mapping.ExcelMapping;
+import life.rnl.batch.excel.mapping.ExcelMappingColumn;
+import life.rnl.batch.excel.mapping.ExcelMappingImpl;
 
-@Component
-public class ExcelMappingBuilder {
-
-	public ExcelMapping build(Class<?> clazz) {
-		Assert.notNull(clazz, "A class must be specified for the ExcelMapping.");
+@FunctionalInterface
+public interface ExcelMappingBuilder {
+	public void stub();
+	
+	default ExcelMapping build(Class<?> clazz) {
+		Assert.notNull(clazz, "A class must be specified to build the ExcelMapping.");
 
 		ExcelMappingImpl excelMapping = new ExcelMappingImpl();
 
