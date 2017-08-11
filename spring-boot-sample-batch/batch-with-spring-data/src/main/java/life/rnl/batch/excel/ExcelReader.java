@@ -62,7 +62,7 @@ public class ExcelReader extends AbstractItemCountingItemStreamItemReader<ExcelR
 	@Override
 	public void open(ExecutionContext executionContext) throws ItemStreamException {
 		super.open(executionContext);
-
+		
 	}
 
 	@Override
