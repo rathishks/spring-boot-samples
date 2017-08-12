@@ -2,6 +2,7 @@ package life.rnl.batch.excel;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.batch.item.ItemProcessor;
 
 import life.rnl.batch.excel.mapping.ExcelMapping;
@@ -14,9 +15,18 @@ public class ExcelProcessor<O> implements ItemProcessor<ExcelRow, O> {
 		this.excelMapping = excelMapping;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public O process(ExcelRow item) throws Exception {
-		return null;
+		Class<?> returnClass = excelMapping.getReturnClass();
+		O processedItem = (O) returnClass.newInstance();
+		
+		Row row = item.getRow();
+		excelMapping.getColumns().forEach((column) -> {
+			
+		});
+
+		return processedItem;
 	}
 
 	@PostConstruct

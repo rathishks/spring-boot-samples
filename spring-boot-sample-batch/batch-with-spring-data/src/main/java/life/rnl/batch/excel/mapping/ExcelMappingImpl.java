@@ -6,6 +6,7 @@ import java.util.List;
 public class ExcelMappingImpl implements ExcelMapping {
 	private String sheetName;
 	private List<ExcelMappingColumn> columns = new ArrayList<>();
+	private Class<?> returnClass;
 
 	@Override
 	public List<ExcelMappingColumn> getColumns() {
@@ -20,5 +21,15 @@ public class ExcelMappingImpl implements ExcelMapping {
 	@Override
 	public void setSheetName(String sheetName) {
 		this.sheetName = sheetName;
+	}
+
+	@Override
+	public void setReturnClass(Class<?> clazz) {
+		this.returnClass = clazz;
+	}
+
+	@Override
+	public Class<?> getReturnClass() {
+		return this.returnClass;
 	}
 }
