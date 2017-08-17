@@ -1,5 +1,6 @@
 package life.rnl.migration.source;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
@@ -18,7 +20,7 @@ import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "life.rnl.migration.source")
+@EnableJpaRepositories(basePackages = "life.rnl.migration.source", entityManagerFactoryRef = "sourceEntityManagerFactory", transactionManagerRef = "sourceTransactionManager")
 public class SourceConfiguration {
 	@Bean
 	@ConfigurationProperties("spring.datasource")
@@ -47,10 +49,16 @@ public class SourceConfiguration {
 
 	@Bean
 	@Primary
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+	public LocalContainerEntityManagerFactoryBean sourceEntityManagerFactory(
 			EntityManagerFactoryBuilder entityManagerFactoryBuilder, DataSource myDataSource,
 			JpaProperties jpaProperties) {
 		return entityManagerFactoryBuilder.dataSource(myDataSource).packages("life.rnl.migration.source")
-				.properties(jpaProperties.getHibernateProperties(myDataSource)).build();
+				.properties(jpaProperties.getHibernateProperties(myDataSource)).persistenceUnit("source").build();
+	}
+
+	@Bean
+	@Primary
+	public JpaTransactionManager sourceTransactionManager(EntityManagerFactory sourceEntityManagerFactory) {
+		return new JpaTransactionManager(sourceEntityManagerFactory);
 	}
 }

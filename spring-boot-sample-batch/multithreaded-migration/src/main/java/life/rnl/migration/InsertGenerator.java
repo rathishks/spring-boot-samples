@@ -6,15 +6,17 @@ import java.util.UUID;
 
 public class InsertGenerator {
 	public static void main(String[] args) throws IOException {
-		FileOutputStream fos = new FileOutputStream("src/main/resources/sourcedata/data-h2.sql");
-		for (int i = 0; i < 50000; i++) {
+		FileOutputStream fos = new FileOutputStream("src/main/resources/source/data-h2.sql");
+
+		for (int i = 0; i < 25000; i++) {
 			if (i % 1000 == 0) {
 				System.out.println(i);
 			}
 
-			fos.write(String.format(
-					"INSERT INTO ASSET (ID, VERSION, SERIAL_NUMBER, DATE_CREATED) VALUES (%s, 0, '%s', CURRENT_TIMESTAMP());\n",
-					i, UUID.randomUUID().toString().substring(0, 8)).getBytes());
+			fos.write(String
+					.format("INSERT INTO ASSET (VERSION, SERIAL_NUMBER, DATE_CREATED) VALUES (0, '%s', CURRENT_TIMESTAMP);\n",
+							UUID.randomUUID().toString().substring(0, 8))
+					.getBytes());
 		}
 		fos.close();
 	}
