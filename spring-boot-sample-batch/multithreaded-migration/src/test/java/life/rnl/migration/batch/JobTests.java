@@ -5,21 +5,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import life.rnl.migration.Application;
@@ -39,6 +41,9 @@ public class JobTests {
 	private Job itemMigrationJob;
 
 	@Autowired
+	private Job synchronizedItemMigrationJob;
+
+	@Autowired
 	private ItemRepository itemRepository;
 
 	@Test
@@ -52,13 +57,21 @@ public class JobTests {
 
 	}
 
-	@Test
-	public void testMigration() throws Exception {
+	// not always reproducible
+	@Test(expected = PersistenceException.class)
+	public void testMigration() throws Throwable {
 		JobExecution jobExecution = this.jobLauncher.run(this.itemMigrationJob, new JobParameters());
-
-		while (!jobExecution.getExitStatus().equals(ExitStatus.COMPLETED)) {
-
+		while (jobExecution.getAllFailureExceptions().isEmpty()) {
+			itemRepository.deleteAll();
+			jobExecution = this.jobLauncher.run(this.itemMigrationJob, new JobParameters());
 		}
+
+		throw jobExecution.getAllFailureExceptions().iterator().next();
+	}
+
+	@Test
+	public void testSynchronizedMigration() throws Exception {
+		this.jobLauncher.run(this.synchronizedItemMigrationJob, new JobParameters());
 
 		List<Item> items = itemRepository.findAll();
 		assertThat(items.size()).isEqualTo(25000);

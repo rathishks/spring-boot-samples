@@ -27,15 +27,16 @@ public class Item {
 	@NotNull
 	@Size(min = 4)
 	@Pattern(regexp = "[a-zA-Z0-9]")
-	@Column(name = "SERIAL_NUMBER")
+	@Column(name = "SERIAL_NUMBER", nullable = false, unique = true)
 	private String serialNumber;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "DATE_CREATED")
+	@Column(name = "DATE_CREATED", nullable = false)
 	private Calendar dateCreated;
-	
+
 	@NotNull
+	@Column(nullable = false, unique = true)
 	private Integer assetId;
 
 	public Integer getVersion() {
