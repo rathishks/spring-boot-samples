@@ -44,7 +44,7 @@ public class BatchConfiguration {
 	public Step itemImportStep(StepBuilderFactory stepBuilderFactory, ItemReader<Asset> itemReader,
 			ItemProcessor<Asset, Item> itemProcessor, ItemWriter<Item> itemWriter,
 			ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
-		return stepBuilderFactory.get("itemMigrationStep").<Asset, Item>chunk(50).reader(itemReader)
+		return stepBuilderFactory.get("itemMigrationStep").<Asset, Item>chunk(1000).reader(itemReader)
 				.processor(itemProcessor).writer(itemWriter).taskExecutor(multiThreadedTaskExecutor).build();
 	}
 
@@ -55,6 +55,7 @@ public class BatchConfiguration {
 
 		reader.setEntityManagerFactory(sourceEntityManagerFactory);
 		reader.setQueryString(readerQuery);
+		reader.setPageSize(100);
 
 		return reader;
 	}
