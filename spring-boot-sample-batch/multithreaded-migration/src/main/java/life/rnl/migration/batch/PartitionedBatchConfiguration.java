@@ -1,11 +1,7 @@
 package life.rnl.migration.batch;
 
-import javax.persistence.EntityManagerFactory;
-
-import org.springframework.batch.core.ItemReadListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepListener;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.partition.support.SimplePartitioner;

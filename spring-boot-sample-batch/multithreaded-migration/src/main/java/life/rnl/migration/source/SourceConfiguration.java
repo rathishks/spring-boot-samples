@@ -20,7 +20,7 @@ import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "life.rnl.migration.source", entityManagerFactoryRef = "sourceEntityManagerFactory", transactionManagerRef = "sourceTransactionManager")
+@EnableJpaRepositories(enableDefaultTransactions=false, basePackages = "life.rnl.migration.source", entityManagerFactoryRef = "sourceEntityManagerFactory", transactionManagerRef = "sourceTransactionManager")
 public class SourceConfiguration {
 	@Bean
 	@ConfigurationProperties("spring.datasource")
