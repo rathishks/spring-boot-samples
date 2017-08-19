@@ -29,7 +29,8 @@ public class DestinationConfiguration {
 	}
 
 	@Bean
-	public JpaVendorAdapter destinationJpaVendorAdapter(JpaProperties jpaProperties, DataSource destinationDataSource) {
+	public JpaVendorAdapter destinationJpaVendorAdapter(JpaProperties jpaProperties,
+			@Qualifier("destinationDataSource") DataSource destinationDataSource) {
 		AbstractJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setShowSql(jpaProperties.isShowSql());
 		adapter.setDatabase(jpaProperties.determineDatabase(destinationDataSource));

@@ -35,6 +35,9 @@ public class Asset {
 	@Column(name = "DATE_CREATED", nullable = false)
 	private Calendar dateCreated;
 
+	@Column(name = "PROCESSED_IND", nullable = false)
+	private boolean processed = false;
+
 	public Integer getVersion() {
 		return version;
 	}
@@ -65,5 +68,13 @@ public class Asset {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public boolean isProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(boolean processed) {
+		this.processed = processed;
 	}
 }

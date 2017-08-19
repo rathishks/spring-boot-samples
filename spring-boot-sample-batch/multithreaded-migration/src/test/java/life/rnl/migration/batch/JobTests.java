@@ -42,6 +42,9 @@ public class JobTests {
 	private Job synchronizedItemMigrationJob;
 
 	@Autowired
+	private Job itemMigrationPartitionedJob;
+
+	@Autowired
 	private ItemRepository itemRepository;
 
 	@Test
@@ -59,10 +62,11 @@ public class JobTests {
 	@Test(expected = PersistenceException.class)
 	public void testMigration() throws Throwable {
 		JobExecution jobExecution = this.jobLauncher.run(this.itemMigrationJob, new JobParameters());
-//		while (jobExecution.getAllFailureExceptions().isEmpty()) {
-//			itemRepository.deleteAll();
-//			jobExecution = this.jobLauncher.run(this.itemMigrationJob, new JobParameters());
-//		}
+		// while (jobExecution.getAllFailureExceptions().isEmpty()) {
+		// itemRepository.deleteAll();
+		// jobExecution = this.jobLauncher.run(this.itemMigrationJob, new
+		// JobParameters());
+		// }
 
 		if (!jobExecution.getAllFailureExceptions().isEmpty()) {
 			throw jobExecution.getAllFailureExceptions().iterator().next();
@@ -74,6 +78,13 @@ public class JobTests {
 		this.jobLauncher.run(this.synchronizedItemMigrationJob, new JobParameters());
 
 		List<Item> items = itemRepository.findAll();
-		assertThat(items.size()).isEqualTo(25000);
+		assertThat(items.size()).isEqualTo(50000);
+	}
+
+	@Test
+	public void testPartitionedMigration() throws Exception {
+		this.jobLauncher.run(this.itemMigrationPartitionedJob, new JobParameters());
+		List<Item> items = itemRepository.findAll();
+		assertThat(items.size()).isEqualTo(50000);
 	}
 }
