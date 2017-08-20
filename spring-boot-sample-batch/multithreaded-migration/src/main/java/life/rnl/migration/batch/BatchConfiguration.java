@@ -51,7 +51,7 @@ public class BatchConfiguration {
 	}
 
 	@Bean
-	public JpaPagingItemReader<Asset> itemReader(EntityManagerFactory sourceEntityManagerFactory,
+	public JpaPagingItemReader<Asset> itemReader(@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory,
 			@Value("${itemImport.reader.query}") String readerQuery) {
 		JpaPagingItemReader<Asset> reader = new JpaPagingItemReader<>();
 
@@ -100,7 +100,7 @@ public class BatchConfiguration {
 
 	@Bean
 	public ItemWriter<Item> itemWriter(
-			@Qualifier("destinationEntityManagerFactory") EntityManagerFactory destinationEntityManagerFactory) {
+			EntityManagerFactory destinationEntityManagerFactory) {
 		JpaItemWriter<Item> itemWriter = new JpaItemWriter<>();
 
 		itemWriter.setEntityManagerFactory(destinationEntityManagerFactory);

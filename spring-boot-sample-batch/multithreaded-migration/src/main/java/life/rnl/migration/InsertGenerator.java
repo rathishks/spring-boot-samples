@@ -14,7 +14,7 @@ public class InsertGenerator {
 			}
 
 			fos.write(String
-					.format("INSERT INTO ASSET (VERSION, SERIAL_NUMBER, DATE_CREATED, PROCESSED_IND) VALUES (0, '%s', CURRENT_TIMESTAMP, FALSE);\n",
+					.format("INSERT INTO ASSET (VERSION, SERIAL_NUMBER, DATE_CREATED, PROCESSED_IND) VALUES (0, '%s', CURRENT_TIMESTAMP, 'UNREAD');\n",
 							UUID.randomUUID().toString().replaceAll("-", ""))
 					.getBytes());
 		}

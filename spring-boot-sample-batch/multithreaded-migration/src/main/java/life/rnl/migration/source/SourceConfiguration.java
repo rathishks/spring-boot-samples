@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -20,11 +19,10 @@ import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration
-@EnableJpaRepositories(enableDefaultTransactions=false, basePackages = "life.rnl.migration.source", entityManagerFactoryRef = "sourceEntityManagerFactory", transactionManagerRef = "sourceTransactionManager")
+@EnableJpaRepositories(basePackages = "life.rnl.migration.source", entityManagerFactoryRef = "sourceEntityManagerFactory", transactionManagerRef = "sourceTransactionManager")
 public class SourceConfiguration {
 	@Bean
 	@ConfigurationProperties("spring.datasource")
-	@Primary
 	public DataSource myDataSource(DataSourceProperties dataSourceProperties) {
 		return dataSourceProperties.initializeDataSourceBuilder().build();
 	}
@@ -48,7 +46,6 @@ public class SourceConfiguration {
 	}
 
 	@Bean
-	@Primary
 	public LocalContainerEntityManagerFactoryBean sourceEntityManagerFactory(
 			EntityManagerFactoryBuilder entityManagerFactoryBuilder, DataSource myDataSource,
 			JpaProperties jpaProperties) {
@@ -57,7 +54,6 @@ public class SourceConfiguration {
 	}
 
 	@Bean
-	@Primary
 	public JpaTransactionManager sourceTransactionManager(EntityManagerFactory sourceEntityManagerFactory) {
 		return new JpaTransactionManager(sourceEntityManagerFactory);
 	}

@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -35,8 +37,9 @@ public class Asset {
 	@Column(name = "DATE_CREATED", nullable = false)
 	private Calendar dateCreated;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "PROCESSED_IND", nullable = false)
-	private boolean processed = false;
+	private ProcessedStatus processed = ProcessedStatus.UNREAD;
 
 	public Integer getVersion() {
 		return version;
@@ -70,11 +73,11 @@ public class Asset {
 		this.id = id;
 	}
 
-	public boolean isProcessed() {
+	public ProcessedStatus getProcessed() {
 		return processed;
 	}
 
-	public void setProcessed(boolean processed) {
+	public void setProcessed(ProcessedStatus processed) {
 		this.processed = processed;
 	}
 }

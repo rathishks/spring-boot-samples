@@ -25,6 +25,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import life.rnl.migration.Application;
 import life.rnl.migration.destination.domain.Item;
 import life.rnl.migration.destination.repository.ItemRepository;
+import life.rnl.migration.source.domain.ProcessedStatus;
+import life.rnl.migration.source.repository.AssetRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -46,6 +48,9 @@ public class JobTests {
 
 	@Autowired
 	private ItemRepository itemRepository;
+	
+	@Autowired
+	private AssetRepository assetRepository;
 
 	@Test
 	public void testBeanCounts() {
@@ -86,5 +91,7 @@ public class JobTests {
 		this.jobLauncher.run(this.itemMigrationPartitionedJob, new JobParameters());
 		List<Item> items = itemRepository.findAll();
 		assertThat(items.size()).isEqualTo(50000);
+		
+		assertThat(assetRepository.countByProcessed(ProcessedStatus.UNREAD)).isEqualTo(0);
 	}
 }
