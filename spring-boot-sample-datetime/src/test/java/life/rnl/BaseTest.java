@@ -1,7 +1,6 @@
 package life.rnl;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ public class BaseTest {
 
 	@Before
 	public void setup() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		vehicle = new Vehicle();
 		vehicle.setDateManufactured(Calendar.getInstance());
 		vehicle.setDateSold(Calendar.getInstance());

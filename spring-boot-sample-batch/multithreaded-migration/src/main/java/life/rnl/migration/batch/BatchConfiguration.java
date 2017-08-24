@@ -45,19 +45,20 @@ public class BatchConfiguration {
 	public Step itemImportStep(StepBuilderFactory stepBuilderFactory, ItemReader<Asset> itemReader,
 			ItemProcessor<Asset, Item> itemProcessor, ItemWriter<Item> itemWriter,
 			ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
-		return stepBuilderFactory.get("itemMigrationStep").<Asset, Item>chunk(1500).reader(itemReader)
-				.processor(itemProcessor).writer(itemWriter).taskExecutor(multiThreadedTaskExecutor)
-				.allowStartIfComplete(true).build();
+		return stepBuilderFactory.get("itemMigrationStep").<Asset, Item>chunk(10000).reader(itemReader)
+				.processor(itemProcessor).writer(itemWriter).taskExecutor(multiThreadedTaskExecutor).build();
 	}
 
 	@Bean
-	public JpaPagingItemReader<Asset> itemReader(@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory,
+	public JpaPagingItemReader<Asset> itemReader(
+			@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory,
 			@Value("${itemImport.reader.query}") String readerQuery) {
 		JpaPagingItemReader<Asset> reader = new JpaPagingItemReader<>();
 
 		reader.setEntityManagerFactory(sourceEntityManagerFactory);
 		reader.setQueryString(readerQuery);
 		reader.setPageSize(1000);
+		reader.setSaveState(false);
 
 		return reader;
 	}
@@ -99,8 +100,7 @@ public class BatchConfiguration {
 	}
 
 	@Bean
-	public ItemWriter<Item> itemWriter(
-			EntityManagerFactory destinationEntityManagerFactory) {
+	public ItemWriter<Item> itemWriter(EntityManagerFactory destinationEntityManagerFactory) {
 		JpaItemWriter<Item> itemWriter = new JpaItemWriter<>();
 
 		itemWriter.setEntityManagerFactory(destinationEntityManagerFactory);
