@@ -18,12 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import life.rnl.domain.Vehicle;
 import life.rnl.dto.VehicleView;
 
 @RunWith(SpringRunner.class)
@@ -52,11 +54,21 @@ public class TimeZoneApplicationTests extends BaseTest {
 		System.out.println(now);
 	}
 
+	private Vehicle generateVehicle() {
+		Vehicle vehicle = new Vehicle();
+		Calendar dateManufactured = Calendar.getInstance();
+		dateManufactured.add(Calendar.DAY_OF_MONTH, -5);
+		vehicle.setDateManufactured(dateManufactured);
+		vehicle.setDateSold(Calendar.getInstance());
+		return vehicle;
+	}
+
 	@Test
 	public void postTest() throws Exception {
+		Vehicle vehicle = generateVehicle();
 		this.mockMvc
-				.perform(post("/save").requestAttr("id", 1).requestAttr("dateManufactured",
-						vehicle.getDateManufactured().getTimeInMillis()))
+				.perform(post("/save").contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsBytes(vehicle)))
 				.andExpect(jsonPath("$.dateManufactured", equalTo(vehicle.getDateManufactured().getTimeInMillis())));
 	}
 }
