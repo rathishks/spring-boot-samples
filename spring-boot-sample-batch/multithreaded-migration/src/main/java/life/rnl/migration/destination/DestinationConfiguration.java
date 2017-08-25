@@ -4,6 +4,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -41,8 +42,8 @@ public class DestinationConfiguration {
 
 	@Bean
 	public EntityManagerFactoryBuilder destinationEntityManagerFactoryBuilder(
-			JpaVendorAdapter destinationJpaVendorAdapter, ObjectProvider<PersistenceUnitManager> persistenceUnitManager,
-			JpaProperties jpaProperties) {
+			@Qualifier("destinationJpaVendorAdapter") JpaVendorAdapter destinationJpaVendorAdapter,
+			ObjectProvider<PersistenceUnitManager> persistenceUnitManager, JpaProperties jpaProperties) {
 		EntityManagerFactoryBuilder builder = new EntityManagerFactoryBuilder(destinationJpaVendorAdapter,
 				jpaProperties.getProperties(), persistenceUnitManager.getIfAvailable());
 		return builder;
@@ -51,8 +52,8 @@ public class DestinationConfiguration {
 	@Bean
 	@Primary
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-			EntityManagerFactoryBuilder destinationEntityManagerFactoryBuilder, DataSource destinationDataSource,
-			JpaProperties jpaProperties) {
+			@Qualifier("destinationEntityManagerFactoryBuilder") EntityManagerFactoryBuilder destinationEntityManagerFactoryBuilder,
+			DataSource destinationDataSource, JpaProperties jpaProperties) {
 		return destinationEntityManagerFactoryBuilder.dataSource(destinationDataSource)
 				.packages("life.rnl.migration.destination")
 				.properties(jpaProperties.getHibernateProperties(destinationDataSource)).persistenceUnit("destination")

@@ -66,6 +66,7 @@ public class JobTests {
 		assertThat(items.size()).isEqualTo(50000);
 		
 		assertThat(assetRepository.countByProcessed(ProcessedStatus.UNREAD)).isEqualTo(0);
+		assertThat(assetRepository.countByProcessed(ProcessedStatus.WRITTEN)).isEqualTo(50000);
 	}
 
 	@Test

@@ -4,6 +4,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -28,7 +29,8 @@ public class SourceConfiguration {
 	}
 
 	@Bean
-	public JpaVendorAdapter jpaVendorAdapter(JpaProperties jpaProperties, DataSource myDataSource) {
+	public JpaVendorAdapter jpaVendorAdapter(JpaProperties jpaProperties,
+			@Qualifier("myDataSource") DataSource myDataSource) {
 		AbstractJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setShowSql(jpaProperties.isShowSql());
 		adapter.setDatabase(jpaProperties.determineDatabase(myDataSource));
@@ -38,7 +40,8 @@ public class SourceConfiguration {
 	}
 
 	@Bean
-	public EntityManagerFactoryBuilder entityManagerFactoryBuilder(JpaVendorAdapter jpaVendorAdapter,
+	public EntityManagerFactoryBuilder entityManagerFactoryBuilder(
+			@Qualifier("jpaVendorAdapter") JpaVendorAdapter jpaVendorAdapter,
 			ObjectProvider<PersistenceUnitManager> persistenceUnitManager, JpaProperties jpaProperties) {
 		EntityManagerFactoryBuilder builder = new EntityManagerFactoryBuilder(jpaVendorAdapter,
 				jpaProperties.getProperties(), persistenceUnitManager.getIfAvailable());
@@ -47,14 +50,15 @@ public class SourceConfiguration {
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean sourceEntityManagerFactory(
-			EntityManagerFactoryBuilder entityManagerFactoryBuilder, DataSource myDataSource,
-			JpaProperties jpaProperties) {
+			@Qualifier("entityManagerFactoryBuilder") EntityManagerFactoryBuilder entityManagerFactoryBuilder,
+			@Qualifier("myDataSource") DataSource myDataSource, JpaProperties jpaProperties) {
 		return entityManagerFactoryBuilder.dataSource(myDataSource).packages("life.rnl.migration.source")
 				.properties(jpaProperties.getHibernateProperties(myDataSource)).persistenceUnit("source").build();
 	}
 
 	@Bean
-	public JpaTransactionManager sourceTransactionManager(EntityManagerFactory sourceEntityManagerFactory) {
+	public JpaTransactionManager sourceTransactionManager(
+			@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory) {
 		return new JpaTransactionManager(sourceEntityManagerFactory);
 	}
 }

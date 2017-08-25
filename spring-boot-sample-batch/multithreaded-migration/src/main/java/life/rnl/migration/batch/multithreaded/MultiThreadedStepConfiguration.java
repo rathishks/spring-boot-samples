@@ -30,12 +30,21 @@ public class MultiThreadedStepConfiguration {
 	}
 
 	@Bean
+	public ProcessedIndicatorStepListener processedIndicatorStepListener(
+			@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory) {
+		ProcessedIndicatorStepListener listener = new ProcessedIndicatorStepListener();
+		listener.setEntityManagerFactory(sourceEntityManagerFactory);
+		return listener;
+	}
+
+	@Bean
 	public Step synchronizedItemImportStep(StepBuilderFactory stepBuilderFactory, ItemReader<Asset> itemReader,
 			ItemProcessor<Asset, Item> itemProcessor, ItemWriter<Item> itemWriter,
-			ProcessedIndicatorStepListener listener, ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
+			ProcessedIndicatorStepListener processedIndicatorStepListener,
+			ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
 		return stepBuilderFactory.get("synchronizedItemMigrationStep").<Asset, Item>chunk(12000).reader(itemReader)
-				.processor(itemProcessor).writer(itemWriter).listener(listener).taskExecutor(multiThreadedTaskExecutor)
-				.build();
+				.processor(itemProcessor).writer(itemWriter).listener(processedIndicatorStepListener)
+				.taskExecutor(multiThreadedTaskExecutor).build();
 	}
 
 	@Bean
