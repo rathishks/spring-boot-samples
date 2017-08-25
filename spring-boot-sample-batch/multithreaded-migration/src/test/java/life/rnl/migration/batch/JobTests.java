@@ -5,13 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,20 +36,17 @@ public class JobTests {
 	private JobLauncher jobLauncher;
 
 	@Autowired
-	private Job itemMigrationJob;
+	private Job multithreadedJob;
 
 	@Autowired
-	private Job synchronizedItemMigrationJob;
-
-	@Autowired
-	private Job itemMigrationPartitionedJob;
+	private Job asyncItemJob;
 
 	@Autowired
 	private ItemRepository itemRepository;
 	
 	@Autowired
 	private AssetRepository assetRepository;
-
+	
 	@Test
 	public void testBeanCounts() {
 		assertThat(applicationContext.getBeansOfType(EntityManagerFactoryBuilder.class).size()).isEqualTo(2);
@@ -63,35 +58,20 @@ public class JobTests {
 
 	}
 
-	// not always reproducible
-	@Test(expected = PersistenceException.class)
-	public void testMigration() throws Throwable {
-		JobExecution jobExecution = this.jobLauncher.run(this.itemMigrationJob, new JobParameters());
-		// while (jobExecution.getAllFailureExceptions().isEmpty()) {
-		// itemRepository.deleteAll();
-		// jobExecution = this.jobLauncher.run(this.itemMigrationJob, new
-		// JobParameters());
-		// }
-
-		if (!jobExecution.getAllFailureExceptions().isEmpty()) {
-			throw jobExecution.getAllFailureExceptions().iterator().next();
-		}
-	}
-
 	@Test
-	public void testSynchronizedMigration() throws Exception {
-		this.jobLauncher.run(this.synchronizedItemMigrationJob, new JobParameters());
+	public void testMultiThreadedMigration() throws Exception {
+		this.jobLauncher.run(this.multithreadedJob, new JobParameters());
 
-		List<Item> items = itemRepository.findAll();
-		assertThat(items.size()).isEqualTo(50000);
-	}
-
-	@Test
-	public void testPartitionedMigration() throws Exception {
-		this.jobLauncher.run(this.itemMigrationPartitionedJob, new JobParameters());
 		List<Item> items = itemRepository.findAll();
 		assertThat(items.size()).isEqualTo(50000);
 		
 		assertThat(assetRepository.countByProcessed(ProcessedStatus.UNREAD)).isEqualTo(0);
+	}
+
+	@Test
+	public void testAsyncMigration() throws Exception {
+		this.jobLauncher.run(this.asyncItemJob, new JobParameters());
+		List<Item> items = itemRepository.findAll();
+		assertThat(items.size()).isEqualTo(50000);
 	}
 }

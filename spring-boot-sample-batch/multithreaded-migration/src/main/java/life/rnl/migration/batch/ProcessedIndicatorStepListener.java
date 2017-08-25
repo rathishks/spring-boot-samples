@@ -1,11 +1,11 @@
 package life.rnl.migration.batch;
 
-import java.util.concurrent.FutureTask;
+import java.util.List;
 
-import org.springframework.batch.core.annotation.AfterProcess;
-import org.springframework.batch.core.annotation.AfterRead;
+import org.springframework.batch.core.annotation.AfterWrite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import life.rnl.migration.destination.domain.Item;
 import life.rnl.migration.source.domain.Asset;
@@ -17,15 +17,13 @@ public class ProcessedIndicatorStepListener {
 	@Autowired
 	private AssetRepository assetRepository;
 
-	@AfterRead
-	public void afterRead(Asset item) {
-		item.setProcessed(ProcessedStatus.READ);
-		assetRepository.save(item);
-	}
-
-	@AfterProcess
-	public void afterProcess(Asset item, FutureTask<Item> result) {
-		item.setProcessed(ProcessedStatus.PROCESSED);
-		assetRepository.save(item);
+	@AfterWrite
+	@Transactional("sourceTransactionManager")
+	public void afterWrite(List<Item> items) {
+		items.forEach((item) -> {
+			Asset asset = assetRepository.findOne(item.getAssetId());
+			asset.setProcessed(ProcessedStatus.WRITTEN);
+			assetRepository.save(asset);
+		});
 	}
 }

@@ -2,6 +2,8 @@ package life.rnl.migration.batch;
 
 import java.util.concurrent.Future;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -11,7 +13,9 @@ import org.springframework.batch.integration.async.AsyncItemWriter;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -20,26 +24,38 @@ import life.rnl.migration.destination.domain.Item;
 import life.rnl.migration.source.domain.Asset;
 
 @Configuration
-public class PartitionedBatchConfiguration {
+public class AsyncItemConfiguration {
 
 	@Bean
-	public Job itemMigrationPartitionedJob(JobBuilderFactory jobBuilderFactory, Step itemPartitionedImportStep) {
-		return jobBuilderFactory.get("itemMigrationPartitionedJob").start(itemPartitionedImportStep).build();
+	public Job asyncItemJob(JobBuilderFactory jobBuilderFactory, Step asyncItemImportStep) {
+		return jobBuilderFactory.get("itemMigrationPartitionedJob").start(asyncItemImportStep).build();
 	}
 
 	@Bean
-	public Step itemPartitionedImportStep(StepBuilderFactory stepBuilderFactory,
-			ItemReader<Asset> synchronizedItemReader,
-			@Qualifier("asyncItemProcessor") ItemProcessor<Asset, Future<Item>> asyncItemProcessor,
-			@Qualifier("asyncItemWriter") ItemWriter<Future<Item>> asyncItemWriter,
-			ProcessedIndicatorStepListener listener, ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
-		Step step = stepBuilderFactory.get("itemPartitionMigrationStep").<Asset, Future<Item>>chunk(100)
-				.reader(synchronizedItemReader).processor(asyncItemProcessor).writer(asyncItemWriter).listener(listener).build();
+	public Step asyncItemImportStep(StepBuilderFactory stepBuilderFactory, ItemReader<Asset> asyncItemReader,
+			ItemProcessor<Asset, Future<Item>> asyncItemProcessor, ItemWriter<Future<Item>> asyncItemWriter,
+			ItemListener listener, ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
+		Step step = stepBuilderFactory.get("itemPartitionMigrationStep").<Asset, Future<Item>>chunk(5000)
+				.reader(asyncItemReader).processor(asyncItemProcessor).writer(asyncItemWriter).listener(listener)
+				.build();
 
 		return step;
 	}
 
-	@Bean(name = "asyncItemProcessor")
+	@Bean
+	public ItemReader<Asset> asyncItemReader(
+			@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory,
+			@Value("${itemImport.reader.query}") String readerQuery) {
+		JpaPagingItemReader<Asset> reader = new JpaPagingItemReader<>();
+
+		reader.setEntityManagerFactory(sourceEntityManagerFactory);
+		reader.setQueryString(readerQuery);
+		reader.setPageSize(5000);
+
+		return reader;
+	}
+
+	@Bean
 	public ItemProcessor<Asset, Future<Item>> asyncItemProcessor(ItemProcessor<Asset, Item> itemProcessor,
 			ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
 		AsyncItemProcessor<Asset, Item> asyncItemProcessor = new AsyncItemProcessor<>();
