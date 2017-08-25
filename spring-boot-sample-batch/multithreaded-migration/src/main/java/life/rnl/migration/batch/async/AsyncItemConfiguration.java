@@ -1,4 +1,4 @@
-package life.rnl.migration.batch;
+package life.rnl.migration.batch.async;
 
 import java.util.concurrent.Future;
 
@@ -34,7 +34,7 @@ public class AsyncItemConfiguration {
 	@Bean
 	public Step asyncItemImportStep(StepBuilderFactory stepBuilderFactory, ItemReader<Asset> asyncItemReader,
 			ItemProcessor<Asset, Future<Item>> asyncItemProcessor, ItemWriter<Future<Item>> asyncItemWriter,
-			ItemListener listener, ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
+			AsyncItemListener listener, ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
 		Step step = stepBuilderFactory.get("itemPartitionMigrationStep").<Asset, Future<Item>>chunk(5000)
 				.reader(asyncItemReader).processor(asyncItemProcessor).writer(asyncItemWriter).listener(listener)
 				.build();

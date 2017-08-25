@@ -1,4 +1,4 @@
-package life.rnl.migration.batch;
+package life.rnl.migration.batch.async;
 
 import java.util.concurrent.Future;
 
@@ -12,7 +12,7 @@ import life.rnl.migration.destination.domain.Item;
 import life.rnl.migration.source.domain.Asset;
 
 @Component
-public class ItemListener {
+public class AsyncItemListener {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private int i = 0;

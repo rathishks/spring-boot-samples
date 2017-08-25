@@ -1,4 +1,4 @@
-package life.rnl.migration.batch;
+package life.rnl.migration.batch.multithreaded;
 
 import java.util.List;
 
