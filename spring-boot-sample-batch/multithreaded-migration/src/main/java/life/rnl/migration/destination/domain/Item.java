@@ -39,6 +39,10 @@ public class Item {
 	@Column(nullable = false, unique = true)
 	private Integer assetId;
 
+	@NotNull
+	@Column(nullable = false)
+	private Part part;
+
 	public Integer getVersion() {
 		return version;
 	}
@@ -77,5 +81,13 @@ public class Item {
 
 	public void setAssetId(Integer assetId) {
 		this.assetId = assetId;
+	}
+
+	public Part getPart() {
+		return part;
+	}
+
+	public void setPart(Part part) {
+		this.part = part;
 	}
 }
