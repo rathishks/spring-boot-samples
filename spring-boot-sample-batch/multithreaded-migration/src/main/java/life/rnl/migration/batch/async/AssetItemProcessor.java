@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 
 import life.rnl.migration.destination.domain.Item;
+import life.rnl.migration.destination.domain.Part;
 import life.rnl.migration.destination.repository.PartRepository;
 import life.rnl.migration.source.domain.Asset;
 
@@ -19,15 +20,18 @@ public class AssetItemProcessor implements ItemProcessor<Asset, Item> {
 	@Override
 	public Item process(Asset item) throws Exception {
 		Integer currentCount = count++;
-		log.info("[START] Processing record # {}");
-		
+		log.info("[START] Processing record # {}", currentCount);
+
 		Item newItem = new Item();
 		newItem.setAssetId(item.getId());
 		newItem.setDateCreated(item.getDateCreated());
 		newItem.setSerialNumber(item.getSerialNumber());
 		
-		log.info("[END] Processed record # {}");
-		return null;
+		Part part = partRepository.findOne(item.getPartType().getId());
+		newItem.setPart(part);
+
+		log.info("[END] Processed record # {}", currentCount);
+		return newItem;
 	}
 
 	public PartRepository getPartRepository() {
@@ -37,5 +41,4 @@ public class AssetItemProcessor implements ItemProcessor<Asset, Item> {
 	public void setPartRepository(PartRepository partRepository) {
 		this.partRepository = partRepository;
 	}
-
 }

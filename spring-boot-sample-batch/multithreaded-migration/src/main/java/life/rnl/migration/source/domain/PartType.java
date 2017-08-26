@@ -1,4 +1,4 @@
-package life.rnl.migration.destination.domain;
+package life.rnl.migration.source.domain;
 
 import java.util.Calendar;
 
@@ -6,8 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,8 +15,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "ITEM")
-public class Item {
+@Table(name = "PART_TYPE")
+public class PartType {
 	@Id
 	@GeneratedValue
 	private Integer id;
@@ -28,23 +26,14 @@ public class Item {
 
 	@NotNull
 	@Size(min = 4)
-	@Pattern(regexp = "[a-zA-Z0-9]")
-	@Column(name = "SERIAL_NUMBER", nullable = false, unique = true)
-	private String serialNumber;
+	@Pattern(regexp = "[a-zA-Z0-9-]")
+	@Column(name = "PART_NUMBER", nullable = false)
+	private String partNumber;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATE_CREATED", nullable = false)
 	private Calendar dateCreated;
-
-	@NotNull
-	@Column(nullable = false, unique = true)
-	private Integer assetId;
-
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "PART", nullable = false)
-	private Part part;
 
 	public Integer getVersion() {
 		return version;
@@ -52,14 +41,6 @@ public class Item {
 
 	public void setVersion(Integer version) {
 		this.version = version;
-	}
-
-	public String getSerialNumber() {
-		return serialNumber;
-	}
-
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
 	}
 
 	public Calendar getDateCreated() {
@@ -78,19 +59,11 @@ public class Item {
 		this.id = id;
 	}
 
-	public Integer getAssetId() {
-		return assetId;
+	public String getPartNumber() {
+		return partNumber;
 	}
 
-	public void setAssetId(Integer assetId) {
-		this.assetId = assetId;
-	}
-
-	public Part getPart() {
-		return part;
-	}
-
-	public void setPart(Part part) {
-		this.part = part;
+	public void setPartNumber(String partNumber) {
+		this.partNumber = partNumber;
 	}
 }

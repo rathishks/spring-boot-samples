@@ -8,6 +8,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,6 +38,11 @@ public class Asset {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATE_CREATED", nullable = false)
 	private Calendar dateCreated;
+
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "PART", nullable = false)
+	private PartType partType;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PROCESSED_IND", nullable = false)
@@ -79,5 +86,13 @@ public class Asset {
 
 	public void setProcessed(ProcessedStatus processed) {
 		this.processed = processed;
+	}
+
+	public PartType getPartType() {
+		return partType;
+	}
+
+	public void setPartType(PartType partType) {
+		this.partType = partType;
 	}
 }

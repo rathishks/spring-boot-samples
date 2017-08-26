@@ -21,7 +21,7 @@ public class Part {
 	private Integer version;
 
 	@NotNull
-	@Size(min = 4, max = 8)
+	@Size(min = 4)
 	@Pattern(regexp = "[a-zA-Z0-9-]")
 	@Column(name = "PART_NUMBER", nullable = false)
 	private String partNumber;
