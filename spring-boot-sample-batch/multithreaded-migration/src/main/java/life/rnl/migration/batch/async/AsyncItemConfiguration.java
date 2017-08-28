@@ -32,7 +32,7 @@ public class AsyncItemConfiguration {
 
 	@Bean
 	public Job asyncItemJob(JobBuilderFactory jobBuilderFactory, Step asyncItemImportStep, Step asyncPartImportStep) {
-		return jobBuilderFactory.get("itemMigrationJob").flow(asyncItemImportStep).next(asyncPartImportStep).end()
+		return jobBuilderFactory.get("itemMigrationJob").flow(asyncPartImportStep).next(asyncItemImportStep).end()
 				.build();
 	}
 
