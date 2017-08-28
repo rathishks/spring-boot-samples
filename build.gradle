@@ -12,6 +12,8 @@ buildscript {
 }
 
 subprojects {
+	ext['spring-batch.version'] = '4.0.0.M3'
+	
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
 	apply plugin: 'org.springframework.boot'
@@ -21,6 +23,7 @@ subprojects {
 
 	repositories {
 		mavenCentral()
+		maven { url "http://repo.spring.io/libs-milestone" }
 	}
 
 	dependencies {

@@ -49,7 +49,7 @@ public class AsyncItemConfiguration {
 	@Bean
 	public ItemReader<Asset> itemReader(
 			@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory,
-			@Value("${itemImport.reader.query}") String readerQuery) {
+			@Value("${itemImport.asyncreader.query}") String readerQuery) {
 		JpaPagingItemReader<Asset> reader = new JpaPagingItemReader<>();
 
 		reader.setEntityManagerFactory(sourceEntityManagerFactory);
@@ -61,13 +61,10 @@ public class AsyncItemConfiguration {
 
 	@Bean
 	public ItemProcessor<Asset, Future<Item>> asyncItemProcessor(PartRepository partRepository,
-			ThreadPoolTaskExecutor multiThreadedTaskExecutor) {
+			ThreadPoolTaskExecutor multiThreadedTaskExecutor, AssetItemProcessor processor) {
 		AsyncItemProcessor<Asset, Item> asyncItemProcessor = new AsyncItemProcessor<>();
 
-		AssetItemProcessor itemProcessor = new AssetItemProcessor();
-		itemProcessor.setPartRepository(partRepository);
-
-		asyncItemProcessor.setDelegate(itemProcessor);
+		asyncItemProcessor.setDelegate(processor);
 		asyncItemProcessor.setTaskExecutor(multiThreadedTaskExecutor);
 
 		return asyncItemProcessor;

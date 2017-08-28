@@ -11,13 +11,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "ITEM")
+@Table(name = "ITEM", uniqueConstraints = {
+		@UniqueConstraint(name = "UQ_PART_AND_SERIAL", columnNames = { "PART", "SERIAL_NUMBER" }) })
 public class Item {
 	@Id
 	@GeneratedValue

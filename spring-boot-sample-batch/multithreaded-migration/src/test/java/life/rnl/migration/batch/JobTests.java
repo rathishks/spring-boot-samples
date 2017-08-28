@@ -43,10 +43,10 @@ public class JobTests {
 
 	@Autowired
 	private ItemRepository itemRepository;
-	
+
 	@Autowired
 	private AssetRepository assetRepository;
-	
+
 	@Test
 	public void testBeanCounts() {
 		assertThat(applicationContext.getBeansOfType(EntityManagerFactoryBuilder.class).size()).isEqualTo(2);
@@ -64,7 +64,7 @@ public class JobTests {
 
 		List<Item> items = itemRepository.findAll();
 		assertThat(items.size()).isEqualTo(50000);
-		
+
 		assertThat(assetRepository.countByProcessed(ProcessedStatus.UNREAD)).isEqualTo(0);
 		assertThat(assetRepository.countByProcessed(ProcessedStatus.WRITTEN)).isEqualTo(50000);
 	}
@@ -74,5 +74,22 @@ public class JobTests {
 		this.jobLauncher.run(this.asyncItemJob, new JobParameters());
 		List<Item> items = itemRepository.findAll();
 		assertThat(items.size()).isEqualTo(50000);
+	}
+
+	@Test
+	public void testComponent() {
+		TestComponent testComponent1 = (TestComponent) applicationContext.getBean("testComponent1");
+		assertThat(testComponent1).isNotNull();
+		assertThat(testComponent1.getPartRepository()).isNotNull();
+
+		TestComponent testComponent2 = (TestComponent) applicationContext.getBean("testComponent2");
+		assertThat(testComponent2).isNotNull();
+		assertThat(testComponent2.getPartRepository()).isNotNull();
+		
+		TestComponent testComponent = (TestComponent) applicationContext.getBean("testComponent");
+		assertThat(testComponent).isNotNull();
+		assertThat(testComponent.getPartRepository()).isNotNull();
+		
+		assertThat(applicationContext.getBeansOfType(TestComponent.class).size()).isEqualTo(3);
 	}
 }
