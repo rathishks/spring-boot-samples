@@ -25,9 +25,9 @@ public class AssetItemProcessor implements ItemProcessor<Asset, Item> {
 	private AtomicInteger count = new AtomicInteger(0);
 
 	@Override
-	public Item process(Asset item) throws Exception {
+	public Item process(final Asset item) throws Exception {
 		Integer currentCount = count.getAndIncrement();
-		log.info("[START] Processing record # {}", currentCount);
+		log.info("[START] Processing record # {} - {}", currentCount, item.getId());
 
 		Item newItem = new Item();
 		newItem.setAssetId(item.getId());
@@ -37,7 +37,7 @@ public class AssetItemProcessor implements ItemProcessor<Asset, Item> {
 		Part part = partRepository.findOne(item.getPartType().getId());
 		newItem.setPart(part);
 
-		log.info("[END] Processed record # {}", currentCount);
+		log.info("[END] Processed record # {} - {}", currentCount, item.getId());
 
 		return newItem;
 	}

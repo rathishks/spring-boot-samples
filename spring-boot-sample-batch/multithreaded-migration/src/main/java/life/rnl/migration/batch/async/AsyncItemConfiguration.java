@@ -39,8 +39,8 @@ public class AsyncItemConfiguration {
 	@Bean
 	public Step asyncItemImportStep(StepBuilderFactory stepBuilderFactory, ItemReader<Asset> itemReader,
 			ItemProcessor<Asset, Future<Item>> asyncItemProcessor, ItemWriter<Future<Item>> asyncItemWriter,
-			AsyncItemListener listener) {
-		Step step = stepBuilderFactory.get("itemMigrationStep").<Asset, Future<Item>>chunk(5000).reader(itemReader)
+			AsyncItemListener listener, @Value("${import.chunk.size}") Integer chunkSize) {
+		Step step = stepBuilderFactory.get("itemMigrationStep").<Asset, Future<Item>>chunk(chunkSize).reader(itemReader)
 				.processor(asyncItemProcessor).writer(asyncItemWriter).listener(listener).build();
 
 		return step;
@@ -49,12 +49,13 @@ public class AsyncItemConfiguration {
 	@Bean
 	public ItemReader<Asset> itemReader(
 			@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory,
-			@Value("${itemImport.asyncreader.query}") String readerQuery) {
+			@Value("${itemImport.asyncreader.query}") String readerQuery,
+			@Value("${import.chunk.size}") Integer chunkSize) {
 		JpaPagingItemReader<Asset> reader = new JpaPagingItemReader<>();
 
 		reader.setEntityManagerFactory(sourceEntityManagerFactory);
 		reader.setQueryString(readerQuery);
-		reader.setPageSize(5000);
+		reader.setPageSize(chunkSize);
 
 		return reader;
 	}
@@ -81,9 +82,9 @@ public class AsyncItemConfiguration {
 
 	@Bean
 	public Step asyncPartImportStep(StepBuilderFactory stepBuilderFactory, ItemReader<PartType> partTypeReader,
-			ItemProcessor<PartType, Future<Part>> asyncPartTypeProcessor,
-			ItemWriter<Future<Part>> asyncPartTypeWriter) {
-		Step step = stepBuilderFactory.get("partMigrationStep").<PartType, Future<Part>>chunk(5000)
+			ItemProcessor<PartType, Future<Part>> asyncPartTypeProcessor, ItemWriter<Future<Part>> asyncPartTypeWriter,
+			@Value("${import.chunk.size}") Integer chunkSize) {
+		Step step = stepBuilderFactory.get("partMigrationStep").<PartType, Future<Part>>chunk(chunkSize)
 				.reader(partTypeReader).processor(asyncPartTypeProcessor).writer(asyncPartTypeWriter).build();
 
 		return step;
@@ -92,12 +93,12 @@ public class AsyncItemConfiguration {
 	@Bean
 	public ItemReader<PartType> partTypeReader(
 			@Qualifier("sourceEntityManagerFactory") EntityManagerFactory sourceEntityManagerFactory,
-			@Value("${partImport.reader.query}") String readerQuery) {
+			@Value("${partImport.reader.query}") String readerQuery, @Value("${import.chunk.size}") Integer chunkSize) {
 		JpaPagingItemReader<PartType> reader = new JpaPagingItemReader<>();
 
 		reader.setEntityManagerFactory(sourceEntityManagerFactory);
 		reader.setQueryString(readerQuery);
-		reader.setPageSize(5000);
+		reader.setPageSize(chunkSize);
 
 		return reader;
 	}
