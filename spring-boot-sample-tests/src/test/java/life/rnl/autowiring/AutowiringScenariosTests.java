@@ -24,6 +24,9 @@ public class AutowiringScenariosTests {
 	@Autowired
 	ApplicationContext appContext;
 
+	/**
+	 * See {@link AutowiringScenarios.TestA}
+	 */
 	@Test
 	public void testA() {
 		TestA testA = appContext.getBean(TestA.class);
@@ -31,6 +34,9 @@ public class AutowiringScenariosTests {
 		assertThat(testA.getApplicationContext()).isNotNull();
 	}
 
+	/**
+	 * See {@link AutowiringScenarios.TestB}
+	 */
 	@Test
 	public void testB() {
 		TestB testB = appContext.getBean(TestB.class);
@@ -38,6 +44,9 @@ public class AutowiringScenariosTests {
 		assertThat(testB.getApplicationContext()).isNotNull();
 	}
 
+	/**
+	 * See {@link AutowiringScenarios.TestC}
+	 */
 	@Test
 	public void testC() {
 		TestBean testBean = appContext.getBean("testCBean", TestBean.class);
@@ -46,6 +55,9 @@ public class AutowiringScenariosTests {
 		assertThat(testBean.getName()).isEqualTo("C");
 	}
 
+	/**
+	 * See {@link AutowiringScenarios.TestD}
+	 */
 	@Test
 	public void testD() {
 		Map<String, TestInjectionDBean> beans = appContext.getBeansOfType(TestInjectionDBean.class);
@@ -61,6 +73,9 @@ public class AutowiringScenariosTests {
 		assertThat(testInjectionBeanB.getTestBean().getName()).isEqualTo("B");
 	}
 
+	/**
+	 * See {@link AutowiringScenarios.TestE}
+	 */
 	@Test
 	public void testE() {
 		Map<String, TestInjectionBean> beans = appContext.getBeansOfType(TestInjectionBean.class);
