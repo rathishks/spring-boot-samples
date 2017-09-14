@@ -74,6 +74,9 @@ public class JobTests {
 		this.jobLauncher.run(this.asyncItemJob, new JobParameters());
 		List<Item> items = itemRepository.findAll();
 		assertThat(items.size()).isEqualTo(50000);
+		items.parallelStream().forEach(item -> {
+			assertThat(item.getPart()).isNotNull();
+		});
 	}
 
 	@Test
